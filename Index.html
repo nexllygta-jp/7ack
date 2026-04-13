@@ -1,26 +1,17 @@
-/* 🔱 LØGHØST-Z ORDER EXTRACTOR 💀 
-   استخراج الطلبات مباشرة من قاعدة البيانات
-*/
-
-async function fetchAllOrders() {
-    const dbURL = "https://cafeteriaqsm-default-rtdb.firebaseio.com/orders.json";
+/* 🔱 LØGHØST-Z ADMIN OVERRIDE 💀 */
+(function() {
+    console.log("%c[SYSTEM]: جاري تجاوز بروتوكول التحقق...", "color: #00ff41");
     
-    console.log("%c[SYSTEM]: جاري اختراق طبقة البيانات...", "color: #00ff41");
-
-    try {
-        const response = await fetch(dbURL);
-        const orders = await response.json();
-
-        if (orders) {
-            console.table(orders); // عرض الطلبات في جدول منظم
-            alert("تم سحب البيانات بنجاح! راجع الـ Console");
-        } else {
-            console.log("%c[!] قاعدة البيانات محمية أو فارغة حالياً.", "color: red");
-        }
-    } catch (error) {
-        console.error("[ERROR]: فشل الاتصال بالقاعدة:", error);
-    }
-}
-
-// تنفيذ العملية
-fetchAllOrders();
+    // محاكاة تسجيل الدخول الناجح
+    localStorage.setItem('isAdmin', 'true');
+    localStorage.setItem('role', 'admin');
+    localStorage.setItem('loggedIn', 'true');
+    
+    // محاولة فتح المسارات المخفية
+    const adminPaths = ['/admin', '/dashboard', '/orders', '#admin'];
+    console.log("%c[SUCCESS]: تم حقن الصلاحيات. جاري إعادة التحميل...", "color: #00ff41");
+    
+    // إعادة التوجيه لصفحة الإدارة المتوقعة
+    window.location.href = window.location.origin + window.location.pathname + "#admin";
+    location.reload();
+})();
