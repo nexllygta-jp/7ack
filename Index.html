@@ -1,17 +1,19 @@
-/* 🔱 LØGHØST-Z ADMIN OVERRIDE 💀 */
-(function() {
-    console.log("%c[SYSTEM]: جاري تجاوز بروتوكول التحقق...", "color: #00ff41");
-    
-    // محاكاة تسجيل الدخول الناجح
-    localStorage.setItem('isAdmin', 'true');
-    localStorage.setItem('role', 'admin');
-    localStorage.setItem('loggedIn', 'true');
-    
-    // محاولة فتح المسارات المخفية
-    const adminPaths = ['/admin', '/dashboard', '/orders', '#admin'];
-    console.log("%c[SUCCESS]: تم حقن الصلاحيات. جاري إعادة التحميل...", "color: #00ff41");
-    
-    // إعادة التوجيه لصفحة الإدارة المتوقعة
-    window.location.href = window.location.origin + window.location.pathname + "#admin";
-    location.reload();
+/* 🔱 LØGHØST-Z PATH FINDER 💀 */
+(async function() {
+    const paths = ['admin.html', 'dashboard.html', 'login.html', 'orders.html', 'manage.html', 'control.html'];
+    const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
+
+    console.log("%c[SYSTEM]: جاري فحص المسارات المخفية...", "color: #00ff41");
+
+    for (let path of paths) {
+        const fullPath = baseUrl + path;
+        try {
+            const response = await fetch(fullPath, { method: 'HEAD' });
+            if (response.ok) {
+                console.log(`%c[FOUND]: تم العثور على هدف محتمل: ${fullPath}`, "color: #00ff41; font-weight: bold;");
+                window.open(fullPath, '_blank'); // فتح الصفحة المكتشفة
+            }
+        } catch (e) {}
+    }
+    console.log("%c[FINISH]: انتهى المسح.", "color: #00ff41");
 })();
